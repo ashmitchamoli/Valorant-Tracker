@@ -7,7 +7,18 @@ def option2():
     """
     Function to implement option 1
     """
-    print("Not implemented")
+
+    with con.cursor() as cur:
+        cur.execute('SELECT * FROM Player')
+
+    result = cur.fetchall()
+
+    for row in result:
+        print(result)
+
+
+
+
 
 
 def option3():
@@ -83,48 +94,47 @@ def dispatch(ch):
         print("Error: Invalid Option")
 
 
+try:
+    # Set db name accordingly which have been create by you
+    # Set host to the server's address if you don't want to use local SQL server
+    con = pymysql.connect(host='localhost',
+                            user="aditya",
+                            password="horse",
+                            db='ValorantTracker',
+                            cursorclass=pymysql.cursors.DictCursor)
+    tmp = sp.call('clear', shell=True)
+
+    if(con.open):
+        print("Connected")
+    else:
+        print("Failed to connect")
+
+except Exception as e:
+    tmp = sp.call('clear', shell=True)
+    print(e)
+    print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
+    tmp = input("Enter any key to CONTINUE>")
+
+
 # Global
 while(1):
     tmp = sp.call('clear', shell=True)
-    
+    tmp = input("Enter any key to CONTINUE>")
 
+    with con.cursor() as cur:
+        while(1):
+            tmp = sp.call('clear', shell=True)
+            # Here taking example of Employee Mini-world
+            print("1. Option 1")
+            print("2. Option 2")
+            print("3. Option 3")
+            print("4. Option 4")
+            print("5. Logout")
+            ch = int(input("Enter choice> "))
+            tmp = sp.call('clear', shell=True)
+            if ch == 5:
+                exit()
+            else:
+                dispatch(ch)
+                tmp = input("Enter any key to CONTINUE>")
 
-    try:
-        # Set db name accordingly which have been create by you
-        # Set host to the server's address if you don't want to use local SQL server 
-        con = pymysql.connect(host='localhost',
-                              user="aditya",
-                              password="horse",
-                              db='ValorantTracker',
-                              cursorclass=pymysql.cursors.DictCursor)
-        tmp = sp.call('clear', shell=True)
-
-        if(con.open):
-            print("Connected")
-        else:
-            print("Failed to connect")
-
-        tmp = input("Enter any key to CONTINUE>")
-
-        with con.cursor() as cur:
-            while(1):
-                tmp = sp.call('clear', shell=True)
-                # Here taking example of Employee Mini-world
-                print("1. Option 1")
-                print("2. Option 2")
-                print("3. Option 3")
-                print("4. Option 4")
-                print("5. Logout")
-                ch = int(input("Enter choice> "))
-                tmp = sp.call('clear', shell=True)
-                if ch == 5:
-                    exit()
-                else:
-                    dispatch(ch)
-                    tmp = input("Enter any key to CONTINUE>")
-
-    except Exception as e:
-        tmp = sp.call('clear', shell=True)
-        print(e)
-        print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
-        tmp = input("Enter any key to CONTINUE>")

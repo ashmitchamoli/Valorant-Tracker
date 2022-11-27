@@ -52,3 +52,5 @@ CREATE TABLE `Player`(
 
     PRIMARY KEY (Player_Tag)
 );
+
+INSERT INTO Player VALUES (1,'john','a','b','c','d','e','f');
