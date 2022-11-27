@@ -34,6 +34,17 @@ def highDefMap():
         print(result)
 
 
+def searchAgent():
+    prefix = input("Enter prefix to be matched: ")
+
+    with con.cursor() as cur:
+        cur.execute("SELECT * FROM Agent WHERE Agent_Name LIKE '%s%' ",prefix)
+
+    result = cur.fetchall()
+
+    for row in result:
+        print(result)
+
 
 
 
@@ -98,11 +109,11 @@ def dispatch(ch):
     if(ch == 1):
         allPlayers()
     elif(ch == 2):
-        option2()
+        fastWeapons()
     elif(ch == 3):
-        option3()
+        highDefMap()
     elif(ch == 4):
-        option4()
+        searchAgent()
     else:
         print("Error: Invalid Option")
 
