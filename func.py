@@ -87,17 +87,14 @@ def dispatch(ch):
 while(1):
     tmp = sp.call('clear', shell=True)
     
-    # Can be skipped if you want to hardcode username and password
-    username = input("Username: ")
-    password = input("Password: ")
+
 
     try:
         # Set db name accordingly which have been create by you
         # Set host to the server's address if you don't want to use local SQL server 
         con = pymysql.connect(host='localhost',
-                              port=30306,
                               user="aditya",
-                              password="password",
+                              password="horse",
                               db='ValorantTracker',
                               cursorclass=pymysql.cursors.DictCursor)
         tmp = sp.call('clear', shell=True)
@@ -113,10 +110,10 @@ while(1):
             while(1):
                 tmp = sp.call('clear', shell=True)
                 # Here taking example of Employee Mini-world
-                print("1. Option 1")  # Hire an Employee
-                print("2. Option 2")  # Fire an Employee
-                print("3. Option 3")  # Promote Employee
-                print("4. Option 4")  # Employee Statistics
+                print("1. Option 1")
+                print("2. Option 2")
+                print("3. Option 3")
+                print("4. Option 4")
                 print("5. Logout")
                 ch = int(input("Enter choice> "))
                 tmp = sp.call('clear', shell=True)
