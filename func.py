@@ -3,13 +3,20 @@ import pymysql
 import pymysql.cursors
 
 
-def option2():
-    """
-    Function to implement option 1
-    """
+def allPlayers():
 
     with con.cursor() as cur:
         cur.execute('SELECT * FROM Player')
+
+    result = cur.fetchall()
+
+    for row in result:
+        print(result)
+
+def fastWeapons():
+
+    with con.cursor() as cur:
+        cur.execute('SELECT * FROM Weapon WHERE Reload_Speed > 50')
 
     result = cur.fetchall()
 
@@ -21,18 +28,14 @@ def option2():
 
 
 
-def option3():
-    """
-    Function to implement option 2
-    """
-    print("Not implemented")
 
 
-def option4():
-    """
-    Function to implement option 3
-    """
-    print("Not implemented")
+
+
+
+
+
+
 
 
 def hireAnEmployee():
@@ -83,7 +86,7 @@ def dispatch(ch):
     """
 
     if(ch == 1):
-        hireAnEmployee()
+        allPlayers()
     elif(ch == 2):
         option2()
     elif(ch == 3):
