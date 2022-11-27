@@ -23,6 +23,16 @@ def fastWeapons():
     for row in result:
         print(result)
 
+def highDefMap():
+
+    with con.cursor() as cur:
+        cur.execute('SELECT * FROM Map WHERE Defender_Win_Percent = (SELECT MAX(Defender_Win_Percent) FROM Map)')
+
+    result = cur.fetchall()
+
+    for row in result:
+        print(result)
+
 
 
 
