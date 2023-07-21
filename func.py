@@ -200,14 +200,11 @@ def dispatch(ch):
 
 
 try:
-    # Set db name accordingly which have been create by you
-    # Set host to the server's address if you don't want to use local SQL server
     con = pymysql.connect(host='localhost',
                             user="root",
                             password="221064",
                             db='ValorantTracker',
                             cursorclass=pymysql.cursors.DictCursor)
-    # tmp = sp.call('clear', shell=True)
 
     if(con.open):
         print("Connected")
@@ -215,7 +212,6 @@ try:
         print("Failed to connect")
 
 except Exception as e:
-    # tmp = sp.call('clear', shell=True)
     print(e)
     print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
     tmp = input("Enter any key to CONTINUE>")
@@ -223,13 +219,10 @@ except Exception as e:
 
 # Global
 while(1):
-    # tmp = sp.call('clear', shell=True)
     tmp = input("Enter any key to CONTINUE>")
 
     with con.cursor() as cur:
         while(1):
-            # tmp = sp.call('clear', shell=True)
-            # Here taking example of Employee Mini-world
             print("1. Fetch all Players")
             print("2. Weapons with reload speed > 50")
             print("3. High defending map")
@@ -242,7 +235,6 @@ while(1):
             print("10. Most populer Agent among all maps")
             print("11. Logout")
             ch = int(input("Enter choice> "))
-            # tmp = sp.call('clear', shell=True)
             if ch == 11:
                 exit()
             else:
