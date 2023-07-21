@@ -1,91 +1,61 @@
 import subprocess as sp
 import pymysql
 import pymysql.cursors
+from tabulate import tabulate
 
+def printResult(result):
+    if(len(result) == 0):
+        print("empty result")
+        return
+    rows = [list(result[0].keys())]
+    for r in result:
+        rows.append(list(r.values()))
+    print(tabulate(rows, tablefmt='psql'))
 
 def allPlayers():
-
     with con.cursor() as cur:
-        cur.execute('SELECT * FROM Player')
+        cur.execute('SELECT * FROM Player;')
 
     result = cur.fetchall()
-
-    for row in result:
-        print(result)
+    printResult(result)
 
 def fastWeapons():
-
     with con.cursor() as cur:
-        cur.execute('SELECT * FROM Weapon WHERE Reload_Speed > 50')
+        cur.execute('SELECT * FROM Weapon WHERE Reload_Speed > 50;')
 
     result = cur.fetchall()
-
-    for row in result:
-        print(result)
+    printResult(result)
 
 def highDefMap():
-
     with con.cursor() as cur:
-        cur.execute('SELECT * FROM Map WHERE Defender_Win_Percent = (SELECT MAX(Defender_Win_Percent) FROM Map)')
+        cur.execute('SELECT * FROM Map WHERE Defender_Win_Percent = (SELECT MAX(Defender_Win_Percent) FROM Map);')
 
     result = cur.fetchall()
-
-    for row in result:
-        print(result)
-
+    printResult(result)
 
 def searchAgent():
     prefix = input("Enter prefix to be matched: ")
 
     with con.cursor() as cur:
-        cur.execute("SELECT * FROM Agent WHERE Agent_Name LIKE '%s%' ",prefix)
+        query = "SELECT * FROM Agent WHERE Agent_Name LIKE '{}%';".format(prefix)
+        cur.execute(query)
 
     result = cur.fetchall()
+    printResult(result)
 
-    for row in result:
-        print(result)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def hireAnEmployee():
-    """
-    This is a sample function implemented for the refrence.
-    This example is related to the Employee Database.
-    In addition to taking input, you are required to handle domain errors as well
-    For example: the SSN should be only 9 characters long
-    Sex should be only M or F
-    If you choose to take Super_SSN, you need to make sure the foreign key constraint is satisfied
-    HINT: Instead of handling all these errors yourself, you can make use of except clause to print the error returned to you by MySQL
-    """
+def InsertPlayer():
     try:
-        # Takes emplyee details as input
+        # Takes player details as input
         row = {}
-        print("Enter new employee's details: ")
-        name = (input("Name (Fname Minit Lname): ")).split(' ')
-        row["Fname"] = name[0]
-        row["Minit"] = name[1]
-        row["Lname"] = name[2]
-        row["Ssn"] = input("SSN: ")
-        row["Bdate"] = input("Birth Date (YYYY-MM-DD): ")
-        row["Address"] = input("Address: ")
-        row["Sex"] = input("Sex: ")
-        row["Salary"] = float(input("Salary: "))
-        row["Dno"] = int(input("Dno: "))
+        print("Enter Player details: ")
 
-        query = "INSERT INTO EMPLOYEE(Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Dno) VALUES('%s', '%c', '%s', '%s', '%s', '%s', '%c', %f, %d)" % (
-            row["Fname"], row["Minit"], row["Lname"], row["Ssn"], row["Bdate"], row["Address"], row["Sex"], row["Salary"], row["Dno"])
+        row["Player_Name"] = input("Player Name: ")
+        row["Tag"] = int(input("Player Tag: "))
+        row["Curr_Rating"] = input("Current Rating: ")
+        row["Peak_Rating"] = input("Peak Rating: ")
+
+        query = "INSERT INTO `Player`(`Player_Tag`, `Player_Name`, `Current_Rating`, `Peak_Rating`) VALUES('%d', '%s', '%s', '%s')" % (
+            row["Tag"], row["Player_Name"], row["Curr_Rating"], row["Peak_Rating"])
 
         print(query)
         cur.execute(query)
@@ -100,12 +70,111 @@ def hireAnEmployee():
 
     return
 
+def InsertWeaponSkin():
+    try:
+        # Takes Skin details as input
+        row = {}
+        print("Enter Skin details: ")
+
+        row["Weapon"] = input("Weapon Name: ")
+        row["Name"] = input("Skin Name: ")
+        row["Price"] = int(input("Price: "))
+        row["Availability"] = int(input("Availability (0 \ 1): "))
+
+        query = "INSERT INTO `Weapon_Skin`(`Weapon`, `Name`, `Price`, `Availability`) VALUES('%s', '%s', '%d', '%d')" % (
+            row["Weapon"], row["Name"], row["Price"], row["Availability"])
+
+        print(query)
+        cur.execute(query)
+        con.commit()
+
+        print("Inserted Into Database")
+
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert into database")
+        print(">>>>>>>>>>>>>", e)
+
+    return
+
+def InsertMap():
+    try:
+        # Takes player details as input
+        row = {}
+        print("Enter Map details: ")
+
+        row["Name"] = input("Map Name: ")
+        row["totalSites"] = int(input("Total Sites: "))
+        row["Location"] = input("Location: ")
+
+        query = "INSERT INTO `Map` (`Map_Name`, `Total_Sites`, `Location`) VALUES('%s', '%d', '%s')" % (
+            row["Name"], row["totalSites"], row["Location"])
+
+        print(query)
+        cur.execute(query)
+        con.commit()
+
+        print("Inserted Into Database")
+
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert into database")
+        print(">>>>>>>>>>>>>", e)
+
+    return
+
+def deleteAgent():
+    name = input("Enter Agent Name to delete: ")
+    try:
+        query = "DELETE FROM `Agent` WHERE `Agent_Name`='%s'" % (name)
+        print(query)
+        cur.execute(query)
+        con.commit()
+        print("Deleted From Database")
+
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert into database")
+        print(">>>>>>>>>>>>>", e)
+
+    return
+
+def SlowWeapons():
+    try:
+        query = "SELECT * FROM `Weapon` WHERE `Reload_Speed` < (SELECT AVG(`Reload_Speed`) FROM `Weapon`);"
+        with con.cursor() as cur:
+            cur.execute(query)
+        
+        result = cur.fetchall()
+        printResult(result)
+
+    except Exception as e:
+        con.rollback()
+        print(">>>>>>>>>>>>>", e)
+
+    return
+
+def PopAgent():
+    try:
+        query = '''SELECT MPopA  from (
+    SELECT COUNT(Map_Name) as count, Most_Popular_Agent as MPopA 
+    FROM Map 
+    WHERE Most_Popular_Agent IS NOT NULL 
+    GROUP BY Most_Popular_Agent) tt 
+WHERE count=(SELECT MAX(count) FROM (select COUNT(Map_Name) as count, Most_Popular_Agent from Map where Most_Popular_Agent IS NOT NULL group by Most_Popular_Agent) t);'''
+        with con.cursor() as cur:
+            cur.execute(query)
+        
+        result = cur.fetchall()
+        printResult(result)
+        
+    except Exception as e:
+        con.rollback()
+        print(">>>>>>>>>>>>>", e)
+
+    return
 
 def dispatch(ch):
-    """
-    Function that maps helper functions to option entered
-    """
-
     if(ch == 1):
         allPlayers()
     elif(ch == 2):
@@ -114,6 +183,18 @@ def dispatch(ch):
         highDefMap()
     elif(ch == 4):
         searchAgent()
+    elif(ch == 5):
+        InsertPlayer()
+    elif(ch == 6):
+        InsertMap()
+    elif(ch == 7):
+        InsertWeaponSkin()
+    elif(ch==8):
+        deleteAgent()
+    elif(ch==9):
+        SlowWeapons()
+    elif(ch==10):
+        PopAgent()
     else:
         print("Error: Invalid Option")
 
@@ -122,11 +203,11 @@ try:
     # Set db name accordingly which have been create by you
     # Set host to the server's address if you don't want to use local SQL server
     con = pymysql.connect(host='localhost',
-                            user="aditya",
-                            password="horse",
+                            user="root",
+                            password="221064",
                             db='ValorantTracker',
                             cursorclass=pymysql.cursors.DictCursor)
-    tmp = sp.call('clear', shell=True)
+    # tmp = sp.call('clear', shell=True)
 
     if(con.open):
         print("Connected")
@@ -134,7 +215,7 @@ try:
         print("Failed to connect")
 
 except Exception as e:
-    tmp = sp.call('clear', shell=True)
+    # tmp = sp.call('clear', shell=True)
     print(e)
     print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
     tmp = input("Enter any key to CONTINUE>")
@@ -142,21 +223,27 @@ except Exception as e:
 
 # Global
 while(1):
-    tmp = sp.call('clear', shell=True)
+    # tmp = sp.call('clear', shell=True)
     tmp = input("Enter any key to CONTINUE>")
 
     with con.cursor() as cur:
         while(1):
-            tmp = sp.call('clear', shell=True)
+            # tmp = sp.call('clear', shell=True)
             # Here taking example of Employee Mini-world
-            print("1. Option 1")
-            print("2. Option 2")
-            print("3. Option 3")
-            print("4. Option 4")
-            print("5. Logout")
+            print("1. Fetch all Players")
+            print("2. Weapons with reload speed > 50")
+            print("3. High defending map")
+            print("4. Search Agent")
+            print("5. Insert Player")
+            print("6. Insert Map")
+            print("7. Insert Weapon Skin")
+            print("8. Delete Agent")
+            print("9. Faster than average Weapons")
+            print("10. Most populer Agent among all maps")
+            print("11. Logout")
             ch = int(input("Enter choice> "))
-            tmp = sp.call('clear', shell=True)
-            if ch == 5:
+            # tmp = sp.call('clear', shell=True)
+            if ch == 11:
                 exit()
             else:
                 dispatch(ch)
